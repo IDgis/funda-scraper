@@ -1,0 +1,13 @@
+version: '2'
+
+volumes:
+  vastgoedfiles:
+
+services:
+  funda-scraper:
+    restart: always
+    image: idgis/funda-scraper
+    environment:
+      - GEMEENTE=gemeente-rijssen-holten
+    volumes:
+      - vastgoedfiles:/home/meteorapp/build/bundle/programs/web.browser/app/data
