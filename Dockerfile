@@ -1,4 +1,4 @@
-FROM idgis/ubuntu-desktop
+FROM idgis/ubuntu-desktop:1.0.0
 LABEL maintainer="IDgis bv"
 
 # kopieer alle scripts naar de desktop
