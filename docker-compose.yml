@@ -6,7 +6,7 @@ volumes:
 services:
   funda-scraper:
     restart: always
-    image: idgis/funda-scraper
+    image: idgis/funda-scraper:1.1.0
     environment:
       - GEMEENTE=gemeente-rijssen-holten
     volumes:
