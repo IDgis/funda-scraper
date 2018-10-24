@@ -1,9 +1,9 @@
 {
-  "name": "simple-webcrawler-javascript",
-  "version": "0.0.0",
-  "description": "A simple wecrawler written in JavaScript",
-  "main": "crawler.js",
-  "author": "Kevin",
+  "name": "funda-scraper",
+  "version": "1.0.0",
+  "description": "Funda Scraper written in JavaScript",
+  "main": "parser.js",
+  "author": "IDgis bv",
   "license": "ISC",
   "dependencies": {
     "cheerio": "^0.19.0",
