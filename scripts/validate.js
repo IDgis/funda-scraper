@@ -1,23 +1,26 @@
 "use strict"
-console.log('Validating GeoJsons ...');
 
 const fs = require('fs');
+let validGeometry = true;
 
-validateGeometry('/root/Desktop/vastgoedTeKoop.json');
-validateGeometry('/root/Desktop/vastgoedTeHuur.json');
+validGeometry = validGeometry && validateGeometry('/root/Desktop/vastgoedTeKoop.json');
+validGeometry = validGeometry && validateGeometry('/root/Desktop/vastgoedTeHuur.json');
 
 function validateGeometry(fileLocation) {
     const inputFile = fs.readFileSync(fileLocation, 'utf8');
     const json = JSON.parse(inputFile);
     const features = json['features'];
+    let valid = true;
 
     for (const feature of features) {
         const geometry = feature['geometry'];
         const coordinates = geometry['coordinates'];
         if (coordinates.length === 0) {
-            throw new Error(`Invalid coordinates in file ${fileLocation}`);
+        	valid = false;
         }
     }
+    
+    return valid;
 }
 
-console.log('GeoJson valid ...');
+console.log(validGeometry);
