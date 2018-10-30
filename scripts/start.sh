@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load gemeente naam
+. /etc/gemeente
+
 echo Scraper started: $(date)
 
 if [ -d /root/Desktop/Funda ]; then
@@ -35,15 +38,19 @@ echo "Geocoding json files ..."
 
 nodejs /root/Desktop/geocode.js
 sleep 5s
-nodejs /root/Desktop/validate.js
+VALID=$(nodejs /root/Desktop/validate.js)
 sleep 5s
 
-echo "Geocoding finished ..."
+if [ "$VALID" == "true" ]; then
+    echo "Geocoding finished ..."
+    cp /root/Desktop/vastgoedTeKoop.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeKoop.json
+    cp /root/Desktop/vastgoedTeHuur.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeHuur.json
+else
+    echo "Some errors occured while geocoding ..."
+fi
+
 echo "------------------------------"
 echo "Cleaning up old files ..."
-
-cp /root/Desktop/vastgoedTeKoop.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeKoop.json
-cp /root/Desktop/vastgoedTeHuur.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeHuur.json
 
 rm /root/Desktop/vastgoedTeKoop.json
 rm /root/Desktop/vastgoedTeHuur.json
