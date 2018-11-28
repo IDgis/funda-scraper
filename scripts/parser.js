@@ -34,12 +34,15 @@ function buildOutputFile(title, outputFile, htmlPages) {
     // Create valid GeoJson from the found features and write it to the specified output file
     const json = JSON.stringify({
         'type': 'FeatureCollection',
-        'name': title,
         'crs': {
             'type': 'name',
             'properties': {
                 'name': 'urn:ogc:def:crs:EPSG:28992'
             }
+        },
+        'properties': {
+            'title': title,
+            'updated': new Date()
         },
         'features': features
     });
