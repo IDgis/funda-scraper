@@ -47,6 +47,7 @@ if [ "$VALID" == "true" ]; then
     cp /root/Desktop/vastgoedTeHuur.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeHuur.json
 else
     echo "Some errors occured while geocoding ..."
+    echo "Not saving results ..."
 fi
 
 echo "------------------------------"
