@@ -25,4 +25,4 @@ echo "Starting cron ..." >> /var/log/funda-scraper.log
 
 cron
 
-exec /startup.sh
+exec /start.sh
