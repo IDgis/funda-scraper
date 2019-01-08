@@ -34,6 +34,7 @@ request(process.env.URL, (error, response, body) => {
  * @param {string} fileName The absolute path to load the file from
  */
 function loadFileAsGeoJson(fileName) {
+    console.log('Loading GeoJSON ...');
     const file = fs.readFileSync(fileName, 'utf8');
     return JSON.parse(file);
 }
@@ -46,6 +47,7 @@ function loadFileAsGeoJson(fileName) {
  * @param {string} outputDetailhandel The location to store the FeatureCollection of Vastgoed GeoJSON
  */
 function separateFeatures(bedrijventerreinen, inputJson, outputBedrijf, outputDetailhandel) {
+    console.log('Splitting file based on geometry ...');
     const featureCollectionBedrijf = JSON.parse(JSON.stringify({type: inputJson.type, crs: inputJson.crs, properties: inputJson.properties, features: []}));
     const featureCollectionDetailhandel = JSON.parse(JSON.stringify({type: inputJson.type, crs: inputJson.crs, properties: inputJson.properties, features: []}));
 
