@@ -6,8 +6,9 @@ volumes:
 services:
   funda-scraper:
     restart: always
-    image: idgis/funda-scraper:1.1.0
+    image: idgis/funda-scraper:1.1.3
     environment:
-      - GEMEENTE=gemeente-rijssen-holten
+      GEMEENTE: gemeente-berkelland
+      BEDRIJVENTERREINEN_FEATURES: https://geoserver.prvgld.nl/geoserver/IBIS/wfs?SERVICE=WFS&version=1.1.0&request=GetFeature&typeName=bedrijventerrein&outputFormat=application/json&bbox=220754,445975,251434,467576
     volumes:
       - vastgoedfiles:/home/meteorapp/build/bundle/programs/web.browser/app/data

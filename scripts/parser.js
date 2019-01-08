@@ -15,8 +15,8 @@ const filesFundaTeHuur = fs.readdirSync(fundaHuurDir);
 const htmlTeKoop = filesFundaTeKoop.filter(file => file.endsWith('.html')).map(file => fundaKoopDir + file);
 const htmlTeHuur = filesFundaTeHuur.filter(file => file.endsWith('.html')).map(file => fundaHuurDir + file);
 
-const outputTeKoop = '/root/Desktop/vastgoedTeKoop.json';
-const outputTeHuur = '/root/Desktop/vastgoedTeHuur.json';
+const outputTeKoop = '/root/Desktop/teKoop.json';
+const outputTeHuur = '/root/Desktop/teHuur.json';
 
 // Build the GeoJson output file
 buildOutputFile('Te Koop', outputTeKoop, htmlTeKoop);
