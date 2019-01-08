@@ -2,6 +2,7 @@
 
 # Store gemeente naam
 echo GEMEENTE=$GEMEENTE > /etc/gemeente
+echo BEDRIJVENTERREINEN_FEATURES="\"$BEDRIJVENTERREINEN_FEATURES\"" >> /etc/gemeente
 
 echo "Logging started ..." > /var/log/funda-scraper.log
 
