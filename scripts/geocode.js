@@ -4,8 +4,8 @@ console.log('Start geocoding ...');
 const request = require('request');
 const fs = require('fs');
 
-const locationTeKoop = '/root/Desktop/vastgoedTeKoop.json';
-const locationTeHuur = '/root/Desktop/vastgoedTeHuur.json';
+const locationTeKoop = '/root/Desktop/teKoop.json';
+const locationTeHuur = '/root/Desktop/teHuur.json';
 
 geocode(locationTeKoop);
 geocode(locationTeHuur);

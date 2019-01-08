@@ -43,8 +43,13 @@ sleep 5s
 
 if [ "$VALID" == "true" ]; then
     echo "Geocoding finished ..."
-    cp /root/Desktop/vastgoedTeKoop.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeKoop.json
-    cp /root/Desktop/vastgoedTeHuur.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeHuur.json
+
+    URL="$BEDRIJVENTERREINEN_FEATURES" nodejs separateByArea.js
+
+    cp /root/Desktop/teKoopBedrijf.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeKoop.json
+    cp /root/Desktop/teKoopDetailhandel.json /home/meteorapp/build/bundle/programs/web.browser/app/data/detailhandelTeKoop.json
+    cp /root/Desktop/teHuurBedrijf.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeHuur.json
+    cp /root/Desktop/teHuurDetailhandel.json /home/meteorapp/build/bundle/programs/web.browser/app/data/detailhandelTeHuur.json
 else
     echo "Some errors occured while geocoding ..."
     echo "Not saving results ..."
@@ -53,8 +58,8 @@ fi
 echo "------------------------------"
 echo "Cleaning up old files ..."
 
-rm /root/Desktop/vastgoedTeKoop.json
-rm /root/Desktop/vastgoedTeHuur.json
+rm /root/Desktop/teKoop*.json
+rm /root/Desktop/teHuur*.json
 
 if [ -d /root/Desktop/Funda ]; then
     rm -rf /root/Desktop/Funda
