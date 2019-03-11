@@ -78,6 +78,7 @@ function parseFundaPages(htmlPages) {
                     break;
                 }
                 straat += adres[adr] + ' ';
+                adresEnd++;
             }
             straat = straat.trim();
 
@@ -87,7 +88,7 @@ function parseFundaPages(htmlPages) {
             }
             nummer = nummer.trim();
             
-            const postcodePlaats = getFundaPostcodePlaats(searchResultHeader);
+            const postcodePlaats = getFundaPostcodePlaats(searchResultHeader).split(' ');
             let postcode;
             let plaats;
             if (postcodePlaats.length === 2) {

@@ -40,9 +40,9 @@ function getFromLocationServer(fileLocation, straat, nummer, plaats, altNummer) 
             const jsonResponse = json['response'];
             if (jsonResponse['numFound'] === 0) {
                 // No features found, try with different home number is not already tried
-                if (nummer.indexOf('-') !== -1 && altNummer === undefined) {
+                if (altNummer === undefined) {
                     console.log(`No coordinates found for ${straat} ${nummer} ${plaats}. Trying again ...`);
-                    getFromLocationServer(fileLocation, straat, nummer, plaats, nummer.split('-')[0]);
+                    getFromLocationServer(fileLocation, straat, nummer, plaats, nummer.split(' ')[0]);
                 } else {
                     console.log(`No coordinates found for ${straat} ${nummer} ${plaats}`);
                     console.log('Adding default coords [0, 0]...');
