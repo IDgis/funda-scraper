@@ -1,6 +1,5 @@
 "use strict";
 
-const request = require('request');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
@@ -62,16 +61,34 @@ function parseFundaPages(htmlPages) {
         console.log(`Parsing file: ${page}`);
         const data = fs.readFileSync(page, 'utf8');
         const $ = cheerio.load(data);
-        const length = $('.search-result-content-inner').length;
 
-        for (let i = 0; i < length; i++) {
-            const adres = getFundaAdres($, i).split(' ');
-            const straat = adres[0];
-            let nummer = adres[1];
-            if (nummer === undefined) nummer = '';
-            let toevoeging = adres[2];
-            if (toevoeging === undefined) toevoeging = '';
-            const postcodePlaats = getFundaPostcodePlaats($, i).split(' ');
+        $('.search-result-content-inner').each((index, elem) => {
+            const searchResultHeader = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-header');
+            const searchResultInfoPrijs = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-info search-result-info-price');
+            const searchResultInfo = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-info');
+
+            const url = getFundaUrl(searchResultHeader);
+            const adres = getFundaAdres(searchResultHeader).split(' ');
+
+            let adresEnd = 0;
+            let straat = '';
+            for (let adr in adres) {
+                if (!isNaN(adres[adr])) {
+                    adresEnd = adr;
+                    break;
+                }
+                straat += adres[adr] + ' ';
+                adresEnd++;
+            }
+            straat = straat.trim();
+
+            let nummer = '';
+            for (; adresEnd < adres.length; adresEnd++) {
+                nummer += adres[adresEnd] + ' ';
+            }
+            nummer = nummer.trim();
+            
+            const postcodePlaats = getFundaPostcodePlaats(searchResultHeader).split(' ');
             let postcode;
             let plaats;
             if (postcodePlaats.length === 2) {
@@ -81,16 +98,16 @@ function parseFundaPages(htmlPages) {
                 postcode = postcodePlaats[0] + ' ' + postcodePlaats[1];
                 plaats = postcodePlaats[2];
             }
-            const oppervlakte = getFundaOppervlakte($, i);
-            const url = getFundaUrl($, i);
-            const prijs = getFundaPrijs($, i);
+
+            const oppervlakte = getFundaOppervlakte(searchResultInfo);
+            const prijs = getFundaPrijs(searchResultInfoPrijs);
 
             const feature = JSON.stringify({
                 'type': 'Feature',
                 'properties': {
                     'Straat': straat,
                     'Huisnummer': nummer,
-                    'Toevoeging': toevoeging,
+                    'Toevoeging': '',
                     'Postcode': postcode,
                     'Plaats': plaats,
                     'Oppervlakte': oppervlakte,
@@ -103,38 +120,37 @@ function parseFundaPages(htmlPages) {
                 }
             });
             features.push(JSON.parse(feature));
-        }
+        });
     });
 
     return features;
 }
 
-function getFundaAdres($, i) {
-    const title = $('.search-result-title');
-    return title[i].children[0].data.trim();
+function getFundaAdres(searchResultHeader) {
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a')
+            .children.find(child => child.attribs && child.attribs.class === 'search-result-title')
+            .children.find(child => child.type === 'text').data.trim();
 }
 
-function getFundaPostcodePlaats($, i) {
-    const pp = $('.search-result-subtitle');
-    return pp[i].children[0].data.trim();
+function getFundaPostcodePlaats(searchResultHeader) {
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a')
+            .children.find(child => child.attribs && child.attribs.class === 'search-result-title')
+            .children.find(child => child.attribs && child.attribs.class === 'search-result-subtitle')
+            .children.find(child => child.type === 'text').data.trim();
 }
 
-function getFundaOppervlakte($, i) {
-    const opp = $('.search-result-kenmerken');
-
-    if (opp[i].children[0].next !== null) {
-        return opp[i].children[0].next.children[1].children[0].data.trim();
-    } else {
-        return '';
-    }
+function getFundaOppervlakte(searchResultInfo) {
+    const kenmerken = searchResultInfo.children.find(child => child.type === 'tag' && child.attribs && child.attribs.class.indexOf('search-result-kenmerken') !== -1)
+            .children.find(child => child.type === 'tag' && child.name === 'li');
+    const oppervlakteTag = kenmerken && kenmerken.children.find(child => child.type === 'tag' && child.attribs && child.attribs.title === 'Oppervlakte');
+    return oppervlakteTag ? oppervlakteTag.children.find(child => child.type === 'text').data.trim() : '';
 }
 
-function getFundaUrl($, i) {
-    const url = $('.search-result-header');
-    return url[i].children[1].attribs.href;
+function getFundaUrl(searchResultHeader) {
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' && !!child.attribs.href).attribs.href;
 }
 
-function getFundaPrijs($, i) {
-    const prijs = $('.search-result-price');
-    return prijs[i].children[0].data.trim();
+function getFundaPrijs(searchResultInfoPrijs) {
+    return searchResultInfoPrijs.children.find(child => child.type === 'tag' && child.attribs && child.attribs.class === 'search-result-price')
+            .children.find(child => child.type === 'text').data.trim();
 }
