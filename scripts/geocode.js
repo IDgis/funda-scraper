@@ -10,6 +10,9 @@ const locationTeHuur = '/root/Desktop/teHuur.json';
 geocode(locationTeKoop);
 geocode(locationTeHuur);
 
+addMissingCoords(locationTeKoop);
+addMissingCoords(locationTeHuur);
+
 function geocode(fileLocation) {
     const inputFile = fs.readFileSync(fileLocation, 'utf8');
     const json = JSON.parse(inputFile);
@@ -18,7 +21,7 @@ function geocode(fileLocation) {
     for (const feature of features) {
         const properties = feature['properties'];
         const straat = properties['Straat'];
-        const nummer = properties['Huisnummer'];
+        const nummer = parseHuisNummer(properties['Huisnummer']);
         const plaats = properties['Plaats'];
         const coordinates = feature['geometry']['coordinates'];
 
@@ -28,53 +31,60 @@ function geocode(fileLocation) {
     }
 }
 
-function getFromLocationServer(fileLocation, straat, nummer, plaats, altNummer) {
-    const huisnummer = altNummer ? altNummer : nummer;
-    request(`https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&q=${straat}+${huisnummer}+${plaats}`, (error, response, body) => {
+function parseHuisNummer(nummer) {
+    let returnNum = nummer;
+    if (isNaN(nummer)) {
+        for (let i = nummer.length; i > 0; i--) {
+            const num = nummer.substring(0, i);
+            if (!isNaN(num)) {
+                returnNum = num;
+                break;
+            }
+        }
+    }
+
+    return returnNum;
+}
+
+function getFromLocationServer(fileLocation, straat, nummer, plaats) {
+    const defaultCoords = [0, 0];
+    request(`https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&q=${straat}+${nummer}+${plaats}`, (error, response, body) => {
         if (error) {
             console.log(error);
-            return;
-        }
-        if (response.statusCode === 200) {
+            console.log('Error with request to locatieserver. Adding default coords [0, 0]...');
+            addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
+        } else if (response.statusCode === 200) {
             const json = JSON.parse(body);
             const jsonResponse = json['response'];
             if (jsonResponse['numFound'] === 0) {
-                // No features found, try with different home number is not already tried
-                if (altNummer === undefined) {
-                    console.log(`No coordinates found for ${straat} ${nummer} ${plaats}. Trying again ...`);
-                    getFromLocationServer(fileLocation, straat, nummer, plaats, nummer.split(' ')[0]);
-                } else {
-                    console.log(`No coordinates found for ${straat} ${nummer} ${plaats}`);
-                    console.log('Adding default coords [0, 0]...');
-                    const coordinates = [0, 0];
-                    addCoords(fileLocation, straat, nummer, plaats, coordinates);
-                }
+                console.log(`No coordinates found for ${straat} ${nummer} ${plaats}`);
+                console.log('Adding default coords [0, 0]...');
+                addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
             } else {
-                if (altNummer) {
-                    console.log(`Coordinates found for ${straat} ${nummer} ${plaats}`);
-                }
                 const result = jsonResponse['docs'][0];
                 const adresId = result['id'];
                 lookupAdresId(adresId, straat, nummer, plaats, fileLocation);
             }
+        } else {
+            console.log('Invalid status code. Adding default coords [0, 0]...');
+            addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
         }
     });
 }
 
 function lookupAdresId(adresId, straat, nummer, plaats, fileLocation) {
+    const defaultCoords = [0, 0];
     if (adresId) {
         request(`https://geodata.nationaalgeoregister.nl/locatieserver/v3/lookup?wt=json&id=${adresId}`, (error, response, body) => {
             if (error) {
                 console.log(error);
-                return;
-            }
-            if (response.statusCode === 200) {
+                console.log('Error looking up adres id. Adding default coords [0, 0]...');
+                addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
+            } else if (response.statusCode === 200) {
                 const json = JSON.parse(body);
-                if (json['response']['numFound'] == 0) {
-                    console.log(`No coordinates found for ${straat} ${nummer} ${plaats}`);
-                    console.log('Adding default coords [0, 0]...');
-                    const coordinates = [0, 0];
-                    addCoords(fileLocation, straat, nummer, plaats, coordinates);
+                if (json['response']['numFound'] === 0) {
+                    console.log(`No coordinates found for ${straat} ${nummer} ${plaats}. Adding default coords [0, 0]...`);
+                    addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
                 } else {
                     const locationData = json['response']['docs'][0];
                     const wkt = locationData['centroide_rd'];
@@ -83,12 +93,14 @@ function lookupAdresId(adresId, straat, nummer, plaats, fileLocation) {
                     coordinates[1] = parseFloat(coordinates[1]);
                     addCoords(fileLocation, straat, nummer, plaats, coordinates);
                 }
+            } else {
+                console.log('Invalid status code. Adding default coords [0, 0]...');
+                addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
             }
         });
     } else {
-        console.log(`Adding default coords [0, 0] for ${straat} ${nummer} ${plaats}...`);
-        const coordinates = [0, 0];
-        addCoords(fileLocation, straat, nummer, plaats, coordinates);
+        console.log('No adres id found. Adding default coords [0, 0]...');
+        addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
     }
 }
 
@@ -110,4 +122,21 @@ function addCoords(fileLocation, straat, nummer, plaats, coordinates) {
             fs.writeFileSync(fileLocation, JSON.stringify(json));
         }
     }
+}
+
+function addMissingCoords(fileLocation) {
+    const inputFile = fs.readFileSync(fileLocation, 'utf8');
+    const json = JSON.parse(inputFile);
+    const features = json['features'];
+
+    for (const feature of features) {
+        const geometry = feature['geometry'];
+        const coords = geometry['coordinates'];
+
+        if (coords.length === 0) {
+            feature['geometry']['coordinates'] = [0, 0];
+        }
+    }
+
+    fs.writeFileSync(fileLocation, JSON.stringify(json));
 }
