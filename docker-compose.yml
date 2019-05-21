@@ -6,11 +6,11 @@ volumes:
 services:
   funda-scraper:
     restart: always
-    image: idgis/funda-scraper:1.1.6
+    image: idgis/funda-scraper:1.1.7
     ports:
       - "8080:80"
     environment:
       GEMEENTE: gemeente-berkelland
-      BEDRIJVENTERREINEN_FEATURES: https://geoserver.prvgld.nl/geoserver/IBIS/wfs?SERVICE=WFS&version=1.1.0&request=GetFeature&typeName=bedrijventerrein&outputFormat=application/json&bbox=220754,445975,251434,467576
+      BEDRIJVENTERREINEN_FEATURES: https://bedrijventerreinen.gelderland.nl/geoserver/IBIS/wfs?SERVICE=WFS&version=1.1.0&request=GetFeature&typeName=bedrijventerrein&outputFormat=application/json&bbox=220754,445975,251434,467576
     volumes:
       - vastgoedfiles:/home/meteorapp/build/bundle/programs/web.browser/app/data
