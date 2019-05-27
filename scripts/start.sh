@@ -37,6 +37,7 @@ echo "------------------------------"
 echo "Geocoding json files ..."
 
 nodejs /root/Desktop/geocode.js
+nodejs /root/Desktop/addMissingCoords.js
 sleep 5s
 VALID=$(nodejs /root/Desktop/validate.js)
 sleep 5s

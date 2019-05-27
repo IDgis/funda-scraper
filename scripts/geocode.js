@@ -10,9 +10,6 @@ const locationTeHuur = '/root/Desktop/teHuur.json';
 geocode(locationTeKoop);
 geocode(locationTeHuur);
 
-addMissingCoords(locationTeKoop);
-addMissingCoords(locationTeHuur);
-
 function geocode(fileLocation) {
     const inputFile = fs.readFileSync(fileLocation, 'utf8');
     const json = JSON.parse(inputFile);
@@ -122,21 +119,4 @@ function addCoords(fileLocation, straat, nummer, plaats, coordinates) {
             fs.writeFileSync(fileLocation, JSON.stringify(json));
         }
     }
-}
-
-function addMissingCoords(fileLocation) {
-    const inputFile = fs.readFileSync(fileLocation, 'utf8');
-    const json = JSON.parse(inputFile);
-    const features = json['features'];
-
-    for (const feature of features) {
-        const geometry = feature['geometry'];
-        const coords = geometry['coordinates'];
-
-        if (coords.length === 0) {
-            feature['geometry']['coordinates'] = [0, 0];
-        }
-    }
-
-    fs.writeFileSync(fileLocation, JSON.stringify(json));
 }
