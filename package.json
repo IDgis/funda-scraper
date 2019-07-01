@@ -8,7 +8,7 @@
   "dependencies": {
     "@turf/boolean-within": "^6.0.1",
     "@turf/turf": "^5.1.6",
-    "cheerio": "^0.19.0",
+    "cheerio": "^0.22.0",
     "request": "^2.65.0"
   }
 }
