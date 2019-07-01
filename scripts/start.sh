@@ -45,7 +45,7 @@ sleep 5s
 if [ "$VALID" == "true" ]; then
     echo "Geocoding finished ..."
 
-    URL="$BEDRIJVENTERREINEN_FEATURES" nodejs /root/Desktop/separateByArea.js
+    nodejs /root/Desktop/separateByArea.js
 
     cp /root/Desktop/teKoopBedrijf.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeKoop.json
     cp /root/Desktop/teKoopDetailhandel.json /home/meteorapp/build/bundle/programs/web.browser/app/data/detailhandelTeKoop.json
