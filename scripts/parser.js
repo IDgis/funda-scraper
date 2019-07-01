@@ -63,7 +63,8 @@ function parseFundaPages(htmlPages) {
         const $ = cheerio.load(data);
 
         $('.search-result-content-inner').each((index, elem) => {
-            const searchResultHeader = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-header');
+            const searchResultHeader = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-header')
+                .children.find(val => val.attribs && val.attribs.class === 'search-result-header-title-col');
             const searchResultInfoPrijs = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-info search-result-info-price');
             const searchResultInfo = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-info');
 
@@ -127,14 +128,15 @@ function parseFundaPages(htmlPages) {
 }
 
 function getFundaAdres(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a')
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' &&
+                child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result-title'))
             .children.find(child => child.attribs && child.attribs.class === 'search-result-title')
             .children.find(child => child.type === 'text').data.trim();
 }
 
 function getFundaPostcodePlaats(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a')
-            .children.find(child => child.attribs && child.attribs.class === 'search-result-title')
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' &&
+                child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result-subtitle'))
             .children.find(child => child.attribs && child.attribs.class === 'search-result-subtitle')
             .children.find(child => child.type === 'text').data.trim();
 }
