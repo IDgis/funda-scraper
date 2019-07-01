@@ -15,18 +15,10 @@ const teHuurDetailhandel = '/root/Desktop/teHuurDetailhandel.json';
 const teKoopGeoJson = loadFileAsGeoJson(teKoop);
 const teHuurGeoJson = loadFileAsGeoJson(teHuur);
 
-request(process.env.URL, (error, response, body) => {
-    if (error) {
-        console.log(error);
-        return;
-    }
-    if (response.statusCode === 200) {
-        const bedrijventerreinen = JSON.parse(body);
+const bedrijventerreinen = loadFileAsGeoJson('/tmp/bedrijventerreinen.json');
+separateFeatures(bedrijventerreinen, teKoopGeoJson, teKoopBedrijf, teKoopDetailhandel);
+separateFeatures(bedrijventerreinen, teHuurGeoJson, teHuurBedrijf, teHuurDetailhandel);
 
-        separateFeatures(bedrijventerreinen, teKoopGeoJson, teKoopBedrijf, teKoopDetailhandel);
-        separateFeatures(bedrijventerreinen, teHuurGeoJson, teHuurBedrijf, teHuurDetailhandel);
-    }
-});
 
 /**
  * Reads a file from location and returns it as GeoJSON

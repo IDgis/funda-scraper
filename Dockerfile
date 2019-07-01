@@ -4,6 +4,7 @@ LABEL maintainer="IDgis bv"
 # Install packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        curl \
         cron \
         npm \
         nodejs \
