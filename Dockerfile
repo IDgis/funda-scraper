@@ -1,9 +1,10 @@
-FROM idgis/ubuntu-desktop:1.1.2
+FROM idgis/ubuntu-desktop:1.1.3
 LABEL maintainer="IDgis bv"
 
 # Install packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        curl \
         cron \
         npm \
         nodejs \
