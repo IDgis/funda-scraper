@@ -7,7 +7,8 @@ echo BEDRIJVENTERREINEN_FEATURES="\"$BEDRIJVENTERREINEN_FEATURES\"" >> /etc/geme
 echo "Logging started ..." > /var/log/funda-scraper.log
 
 # Add cron schedule
-/root/Desktop/update-cron.sh
+/root/Desktop/update-bedrijventerreinen.sh
+/root/Desktop/update-cron.sh --init
 
 echo "Starting cron ..." >> /var/log/funda-scraper.log
 
