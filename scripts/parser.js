@@ -63,10 +63,10 @@ function parseFundaPages(htmlPages) {
         const $ = cheerio.load(data);
 
         $('.search-result-content-inner').each((index, elem) => {
-            const searchResultHeader = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-header')
-                .children.find(val => val.attribs && val.attribs.class === 'search-result-header-title-col');
-            const searchResultInfoPrijs = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-info search-result-info-price');
-            const searchResultInfo = elem.children.find(val => val.attribs && val.attribs.class === 'search-result-info');
+            const searchResultHeader = elem.children.find(child => child.attribs && child.attribs.class.indexOf('search-result__header') !== -1)
+                .children.find(child => child.attribs && child.attribs.class.indexOf('search-result__header-title-col') !== -1);
+            const searchResultInfoPrijs = elem.children.find(child => child.attribs && child.attribs.class === 'search-result-info search-result-info-price');
+            const searchResultInfo = elem.children.find(child => child.attribs && child.attribs.class === 'search-result-info');
 
             const url = getFundaUrl(searchResultHeader);
             const adres = getFundaAdres(searchResultHeader).split(' ');
@@ -88,7 +88,7 @@ function parseFundaPages(htmlPages) {
                 nummer += adres[adresEnd] + ' ';
             }
             nummer = nummer.trim();
-            
+
             const postcodePlaats = getFundaPostcodePlaats(searchResultHeader).split(' ');
             let postcode;
             let plaats;
@@ -128,17 +128,19 @@ function parseFundaPages(htmlPages) {
 }
 
 function getFundaAdres(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' &&
-                child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result-title'))
-            .children.find(child => child.attribs && child.attribs.class === 'search-result-title')
-            .children.find(child => child.type === 'text').data.trim();
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'div')
+        .children.find(child => child.type === 'tag' && child.name === 'a' &&
+            child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result__header-title'))
+        .children.find(child => child.attribs && child.attribs.class === 'search-result__header-title')
+        .children.find(child => child.type === 'text').data.trim();
 }
 
 function getFundaPostcodePlaats(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' &&
-                child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result-subtitle'))
-            .children.find(child => child.attribs && child.attribs.class === 'search-result-subtitle')
-            .children.find(child => child.type === 'text').data.trim();
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'div')
+        .children.find(child => child.type === 'tag' && child.name === 'a' &&
+            child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result__header-subtitle'))
+        .children.find(child => child.attribs && child.attribs.class === 'search-result__header-subtitle')
+        .children.find(child => child.type === 'text').data.trim();
 }
 
 function getFundaOppervlakte(searchResultInfo) {
@@ -149,10 +151,11 @@ function getFundaOppervlakte(searchResultInfo) {
 }
 
 function getFundaUrl(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' && !!child.attribs.href).attribs.href;
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'div')
+        .children.find(child => child.type === 'tag' && child.name === 'a' && !!child.attribs.href).attribs.href;
 }
 
 function getFundaPrijs(searchResultInfoPrijs) {
     return searchResultInfoPrijs.children.find(child => child.type === 'tag' && child.attribs && child.attribs.class === 'search-result-price')
-            .children.find(child => child.type === 'text').data.trim();
+        .children.find(child => child.type === 'text').data.trim();
 }
