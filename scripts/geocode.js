@@ -18,7 +18,7 @@ function geocode(fileLocation) {
     for (const feature of features) {
         const properties = feature['properties'];
         const straat = properties['Straat'];
-        const nummer = parseHuisNummer(properties['Huisnummer']);
+        const nummer = parseHuisNummer(properties['Nummer']);
         const plaats = properties['Plaats'];
         const coordinates = feature['geometry']['coordinates'];
 
@@ -109,7 +109,7 @@ function addCoords(fileLocation, straat, nummer, plaats, coordinates) {
     for (const feature of features) {
         const properties = feature['properties'];
         const orgStraat = properties['Straat'];
-        const orgNummer = properties['Huisnummer'];
+        const orgNummer = properties['Nummer'];
         const orgPlaats = properties['Plaats'];
         const geometry = feature['geometry'];
         const coords = geometry['coordinates'];
