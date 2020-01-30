@@ -69,7 +69,9 @@ function parseFundaPages(htmlPages) {
             const searchResultInfo = elem.children.find(child => child.attribs && child.attribs.class === 'search-result-info');
 
             const url = getFundaUrl(searchResultHeader);
-            const adres = getFundaAdres(searchResultHeader).split(' ');
+            const adresPlaats = getFundaAdresPlaats(searchResultHeader).split(',');
+            const adres = adresPlaats[0].trim().split(' ');
+            const plaats = adresPlaats[1].trim();
 
             let adresEnd = 0;
             let straat = '';
@@ -89,17 +91,6 @@ function parseFundaPages(htmlPages) {
             }
             nummer = nummer.trim();
 
-            const postcodePlaats = getFundaPostcodePlaats(searchResultHeader).split(' ');
-            let postcode;
-            let plaats;
-            if (postcodePlaats.length === 2) {
-                postcode = postcodePlaats[0];
-                plaats = postcodePlaats[1];
-            } else {
-                postcode = postcodePlaats[0] + ' ' + postcodePlaats[1];
-                plaats = postcodePlaats[2];
-            }
-
             const oppervlakte = getFundaOppervlakte(searchResultInfo);
             const prijs = getFundaPrijs(searchResultInfoPrijs);
 
@@ -107,9 +98,7 @@ function parseFundaPages(htmlPages) {
                 'type': 'Feature',
                 'properties': {
                     'Straat': straat,
-                    'Huisnummer': nummer,
-                    'Toevoeging': '',
-                    'Postcode': postcode,
+                    'Nummer': nummer,
                     'Plaats': plaats,
                     'Oppervlakte': oppervlakte,
                     'Prijs': prijs,
@@ -127,19 +116,10 @@ function parseFundaPages(htmlPages) {
     return features;
 }
 
-function getFundaAdres(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'div')
-        .children.find(child => child.type === 'tag' && child.name === 'a' &&
-            child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result__header-title'))
-        .children.find(child => child.attribs && child.attribs.class === 'search-result__header-title')
-        .children.find(child => child.type === 'text').data.trim();
-}
-
-function getFundaPostcodePlaats(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'div')
-        .children.find(child => child.type === 'tag' && child.name === 'a' &&
-            child.children.find(subChild => subChild.attribs && subChild.attribs.class === 'search-result__header-subtitle'))
-        .children.find(child => child.attribs && child.attribs.class === 'search-result__header-subtitle')
+function getFundaAdresPlaats(searchResultHeader) {
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' &&
+            child.children.find(subChild => subChild.attribs && subChild.attribs.class.indexOf('search-result__header-title') !== -1))
+        .children.find(child => child.attribs && child.attribs.class.indexOf('search-result__header-title') !== -1)
         .children.find(child => child.type === 'text').data.trim();
 }
 
@@ -151,8 +131,7 @@ function getFundaOppervlakte(searchResultInfo) {
 }
 
 function getFundaUrl(searchResultHeader) {
-    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'div')
-        .children.find(child => child.type === 'tag' && child.name === 'a' && !!child.attribs.href).attribs.href;
+    return searchResultHeader.children.find(child => child.type === 'tag' && child.name === 'a' && !!child.attribs.href).attribs.href;
 }
 
 function getFundaPrijs(searchResultInfoPrijs) {
