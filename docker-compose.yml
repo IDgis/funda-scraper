@@ -6,7 +6,7 @@ volumes:
 services:
   funda-scraper:
     restart: always
-    image: idgis/funda-scraper:1.4.0
+    image: idgis/funda-scraper:1.4.1
     ports:
       - "8080:80"
     environment:
