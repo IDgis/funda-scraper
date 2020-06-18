@@ -63,53 +63,55 @@ function parseFundaPages(htmlPages) {
         const $ = cheerio.load(data);
 
         $('.search-result-content-inner').each((index, elem) => {
-            const searchResultHeader = elem.children.find(child => child.attribs && child.attribs.class.indexOf('search-result__header') !== -1)
-                .children.find(child => child.attribs && child.attribs.class.indexOf('search-result__header-title-col') !== -1);
-            const searchResultInfoPrijs = elem.children.find(child => child.attribs && child.attribs.class === 'search-result-info search-result-info-price');
-            const searchResultInfo = elem.children.find(child => child.attribs && child.attribs.class === 'search-result-info');
+            const searchResultHeader = elem.children.find(child => child.attribs && child.attribs.class.indexOf('search-result__header') !== -1);
+            if (searchResultHeader != null) {
+                const searchResultHeaderTitle = searchResultHeader.children.find(child => child.attribs && child.attribs.class.indexOf('search-result__header-title-col') !== -1);
+                const searchResultInfoPrijs = elem.children.find(child => child.attribs && child.attribs.class === 'search-result-info search-result-info-price');
+                const searchResultInfo = elem.children.find(child => child.attribs && child.attribs.class === 'search-result-info');
 
-            const url = getFundaUrl(searchResultHeader);
-            const adresPlaats = getFundaAdresPlaats(searchResultHeader).split(',');
-            const adres = adresPlaats[0].trim().split(' ');
-            const plaats = adresPlaats[1].trim();
+                const url = getFundaUrl(searchResultHeaderTitle);
+                const adresPlaats = getFundaAdresPlaats(searchResultHeaderTitle).split(',');
+                const adres = adresPlaats[0].trim().split(' ');
+                const plaats = adresPlaats[1].trim();
 
-            let adresEnd = 0;
-            let straat = '';
-            for (let adr in adres) {
-                if (!isNaN(adres[adr])) {
-                    adresEnd = adr;
-                    break;
+                let adresEnd = 0;
+                let straat = '';
+                for (let adr in adres) {
+                    if (!isNaN(adres[adr])) {
+                        adresEnd = adr;
+                        break;
+                    }
+                    straat += adres[adr] + ' ';
+                    adresEnd++;
                 }
-                straat += adres[adr] + ' ';
-                adresEnd++;
-            }
-            straat = straat.trim();
+                straat = straat.trim();
 
-            let nummer = '';
-            for (; adresEnd < adres.length; adresEnd++) {
-                nummer += adres[adresEnd] + ' ';
-            }
-            nummer = nummer.trim();
-
-            const oppervlakte = getFundaOppervlakte(searchResultInfo);
-            const prijs = getFundaPrijs(searchResultInfoPrijs);
-
-            const feature = JSON.stringify({
-                'type': 'Feature',
-                'properties': {
-                    'Straat': straat,
-                    'Nummer': nummer,
-                    'Plaats': plaats,
-                    'Oppervlakte': oppervlakte,
-                    'Prijs': prijs,
-                    'URL': url
-                },
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': []
+                let nummer = '';
+                for (; adresEnd < adres.length; adresEnd++) {
+                    nummer += adres[adresEnd] + ' ';
                 }
-            });
-            features.push(JSON.parse(feature));
+                nummer = nummer.trim();
+
+                const oppervlakte = getFundaOppervlakte(searchResultInfo);
+                const prijs = getFundaPrijs(searchResultInfoPrijs);
+
+                const feature = JSON.stringify({
+                    'type': 'Feature',
+                    'properties': {
+                        'Straat': straat,
+                        'Nummer': nummer,
+                        'Plaats': plaats,
+                        'Oppervlakte': oppervlakte,
+                        'Prijs': prijs,
+                        'URL': url
+                    },
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': []
+                    }
+                });
+                features.push(JSON.parse(feature));
+            }
         });
     });
 
