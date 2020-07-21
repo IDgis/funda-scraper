@@ -1,4 +1,4 @@
-FROM idgis/ubuntu-desktop:1.1.7
+FROM idgis/ubuntu-desktop:1.1.8
 LABEL maintainer="IDgis bv"
 
 # Install packages
