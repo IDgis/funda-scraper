@@ -45,7 +45,7 @@ function parseHuisNummer(nummer) {
 
 function getFromLocationServer(fileLocation, straat, nummer, plaats) {
     const defaultCoords = [0, 0];
-    request(`https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&q=${straat}+${nummer}+${plaats}`, (error, response, body) => {
+    request(`https://api.pdok.nl/bzk/locatieserver/search/v3_1/suggest?wt=json&q=${straat}+${nummer}+${plaats}`, (error, response, body) => {
         if (error) {
             console.log(error);
             console.log('Error with request to locatieserver. Adding default coords [0, 0]...');
@@ -72,7 +72,7 @@ function getFromLocationServer(fileLocation, straat, nummer, plaats) {
 function lookupAdresId(adresId, straat, nummer, plaats, fileLocation) {
     const defaultCoords = [0, 0];
     if (adresId) {
-        request(`https://geodata.nationaalgeoregister.nl/locatieserver/v3/lookup?wt=json&id=${adresId}`, (error, response, body) => {
+        request(`https://api.pdok.nl/bzk/locatieserver/search/v3_1/lookup?wt=json&id=${adresId}`, (error, response, body) => {
             if (error) {
                 console.log(error);
                 console.log('Error looking up adres id. Adding default coords [0, 0]...');
