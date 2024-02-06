@@ -1,7 +1,6 @@
 "use strict"
 console.log('Start geocoding ...');
 
-const request = require('request');
 const fs = require('fs');
 
 const locationTeKoop = '/root/Desktop/teKoop.json';
@@ -45,14 +44,10 @@ function parseHuisNummer(nummer) {
 
 function getFromLocationServer(fileLocation, straat, nummer, plaats) {
     const defaultCoords = [0, 0];
-    request(`https://api.pdok.nl/bzk/locatieserver/search/v3_1/suggest?wt=json&q=${straat}+${nummer}+${plaats}`, (error, response, body) => {
-        if (error) {
-            console.log(error);
-            console.log('Error with request to locatieserver. Adding default coords [0, 0]...');
-            addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
-        } else if (response.statusCode === 200) {
-            const json = JSON.parse(body);
-            const jsonResponse = json['response'];
+    fetch(`https://api.pdok.nl/bzk/locatieserver/search/v3_1/suggest?wt=json&q=${straat}+${nummer}+${plaats}`)
+        .then(response => response.json())
+        .then(json => json['response'])
+        .then(jsonResponse => {
             if (jsonResponse['numFound'] === 0) {
                 console.log(`No coordinates found for ${straat} ${nummer} ${plaats}`);
                 console.log('Adding default coords [0, 0]...');
@@ -62,39 +57,39 @@ function getFromLocationServer(fileLocation, straat, nummer, plaats) {
                 const adresId = result['id'];
                 lookupAdresId(adresId, straat, nummer, plaats, fileLocation);
             }
-        } else {
-            console.log('Invalid status code. Adding default coords [0, 0]...');
+        })
+        .catch(error => {
+            console.log(error);
+            console.log('Error with request to locatieserver. Adding default coords [0, 0]...');
             addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
-        }
-    });
+        });
 }
 
 function lookupAdresId(adresId, straat, nummer, plaats, fileLocation) {
     const defaultCoords = [0, 0];
+    // adr-a7ad85fed9db0fd3c9d238343d045829
     if (adresId) {
-        request(`https://api.pdok.nl/bzk/locatieserver/search/v3_1/lookup?wt=json&id=${adresId}`, (error, response, body) => {
-            if (error) {
-                console.log(error);
-                console.log('Error looking up adres id. Adding default coords [0, 0]...');
-                addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
-            } else if (response.statusCode === 200) {
-                const json = JSON.parse(body);
-                if (json['response']['numFound'] === 0) {
+        fetch(`https://api.pdok.nl/bzk/locatieserver/search/v3_1/lookup?wt=json&id=${adresId}`)
+            .then(response => response.json())
+            .then(json => json['response'])
+            .then(jsonResponse => {
+                if (jsonResponse['numFound'] === 0) {
                     console.log(`No coordinates found for ${straat} ${nummer} ${plaats}. Adding default coords [0, 0]...`);
                     addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
                 } else {
-                    const locationData = json['response']['docs'][0];
+                    const locationData = jsonResponse['docs'][0];
                     const wkt = locationData['centroide_rd'];
                     const coordinates = wkt.substring(wkt.indexOf('(')+1, wkt.indexOf(')')).split(' ');
                     coordinates[0] = parseFloat(coordinates[0]);
                     coordinates[1] = parseFloat(coordinates[1]);
                     addCoords(fileLocation, straat, nummer, plaats, coordinates);
                 }
-            } else {
-                console.log('Invalid status code. Adding default coords [0, 0]...');
+            })
+            .catch(error => {
+                console.log(error);
+                console.log('Error looking up adres id. Adding default coords [0, 0]...');
                 addCoords(fileLocation, straat, nummer, plaats, defaultCoords);
-            }
-        });
+            });
     } else {
         console.log('No adres id found. Adding default coords [0, 0]...');
         addCoords(fileLocation, straat, nummer, plaats, defaultCoords);

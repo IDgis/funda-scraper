@@ -1,4 +1,4 @@
-FROM idgis/ubuntu-desktop:1.1.10
+FROM idgis/ubuntu-desktop:1.1.11
 LABEL maintainer="IDgis bv"
 
 # Install packages
@@ -12,6 +12,7 @@ RUN apt-get update && \
 
 # kopieer alle scripts naar de desktop
 COPY package.json /root/Desktop/
+COPY package-lock.json /root/Desktop/
 COPY scripts/ /root/Desktop/
 
 WORKDIR /root/Desktop
