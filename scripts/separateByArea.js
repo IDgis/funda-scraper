@@ -2,7 +2,6 @@
 
 const turf = require('@turf/turf');
 const fs = require('fs');
-const request = require('request');
 
 const teKoop = '/root/Desktop/teKoop.json';
 const teHuur = '/root/Desktop/teHuur.json';
