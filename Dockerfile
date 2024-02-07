@@ -23,4 +23,4 @@ RUN chmod a+x /root/Desktop/*.sh
 VOLUME /home/meteorapp/build/bundle/programs/web.browser/app/data
 
 # Keep running
-ENTRYPOINT /root/Desktop/run.sh
+ENTRYPOINT ["/root/Desktop/run.sh"]
