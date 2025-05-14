@@ -1,7 +1,7 @@
 "use strict";
 
-const turf = require('@turf/turf');
-const fs = require('fs');
+import { flattenEach, booleanWithin } from '@turf/turf';
+import fs from 'fs';
 
 const teKoop = '/root/Desktop/teKoop.json';
 const teHuur = '/root/Desktop/teHuur.json';
@@ -47,8 +47,8 @@ function separateFeatures(bedrijventerreinen, inputJson, outputBedrijf, outputDe
 
     inputJson.features.forEach(inputFeature => {
         let within = false;
-        turf.flattenEach(bedrijventerreinen, terreinFeature => {
-            within = within || turf.booleanWithin(inputFeature, terreinFeature);
+        flattenEach(bedrijventerreinen, terreinFeature => {
+            within = within || booleanWithin(inputFeature, terreinFeature);
         });
 
         if (within) {

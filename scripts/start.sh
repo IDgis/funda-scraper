@@ -29,23 +29,23 @@ echo "Finished downloading pages ..."
 echo "------------------------------"
 echo "Parsing downloaded pages ..."
 
-nodejs /root/Desktop/parser.js
+/usr/local/bin/node /root/Desktop/parser.js
 sleep 5s
 
 echo "Parsing finished ..."
 echo "------------------------------"
 echo "Geocoding json files ..."
 
-nodejs /root/Desktop/geocode.js
-nodejs /root/Desktop/addMissingCoords.js
+/usr/local/bin/node /root/Desktop/geocode.js
+/usr/local/bin/node /root/Desktop/addMissingCoords.js
 sleep 5s
-VALID=$(nodejs /root/Desktop/validate.js)
+VALID=$(/usr/local/bin/node /root/Desktop/validate.js)
 sleep 5s
 
 if [ "$VALID" == "true" ]; then
     echo "Geocoding finished ..."
 
-    nodejs /root/Desktop/separateByArea.js
+    /usr/local/bin/node /root/Desktop/separateByArea.js
 
     cp /root/Desktop/teKoopBedrijf.json /home/meteorapp/build/bundle/programs/web.browser/app/data/vastgoedTeKoop.json
     cp /root/Desktop/teKoopDetailhandel.json /home/meteorapp/build/bundle/programs/web.browser/app/data/detailhandelTeKoop.json
