@@ -1,6 +1,6 @@
 "use strict"
 
-const fs = require('fs');
+import fs from 'fs';
 
 const locationTeKoop = '/root/Desktop/teKoop.json';
 const locationTeHuur = '/root/Desktop/teHuur.json';

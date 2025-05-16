@@ -2,12 +2,14 @@
   "name": "funda-scraper",
   "version": "1.0.0",
   "description": "Funda Scraper written in JavaScript",
+  "type": "module",
   "main": "parser.js",
   "author": "IDgis bv",
   "license": "ISC",
   "dependencies": {
-    "@turf/boolean-within": "^6.0.1",
+    "@turf/boolean-within": "^6.5.0",
     "@turf/turf": "^5.1.6",
-    "cheerio": "^0.22.0"
+    "cheerio": "^0.22.0",
+    "node-fetch": "^3.3.2"
   }
 }

@@ -1,7 +1,7 @@
 "use strict";
 
-const cheerio = require('cheerio');
-const fs = require('fs');
+import cheerio from 'cheerio';
+import fs from 'fs';
 
 const fundaKoopDir = '/root/Desktop/Funda/Koop/';
 const fundaHuurDir = '/root/Desktop/Funda/Huur/';

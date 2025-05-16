@@ -1,7 +1,9 @@
 "use strict"
-console.log('Start geocoding ...');
 
-const fs = require('fs');
+import fetch from "node-fetch";
+import fs from 'fs';
+
+console.log('Start geocoding ...');
 
 const locationTeKoop = '/root/Desktop/teKoop.json';
 const locationTeHuur = '/root/Desktop/teHuur.json';
