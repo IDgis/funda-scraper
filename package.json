@@ -9,7 +9,7 @@
   "dependencies": {
     "@turf/boolean-within": "^6.5.0",
     "@turf/turf": "^5.1.6",
-    "cheerio": "^0.22.0",
+    "cheerio": "^1.0.0",
     "node-fetch": "^3.3.2"
   }
 }
